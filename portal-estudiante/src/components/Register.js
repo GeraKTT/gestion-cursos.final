@@ -32,24 +32,37 @@ export default function Register() {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-5">
-          <div className="card shadow-sm p-4 border-0 bg-light">
-            <h2 className="text-center mb-4">Crear Cuenta</h2>
-            {error && <div className="alert alert-danger py-2">{error}</div>}
-            {success && <div className="alert alert-success py-2">{success}</div>}
-            <form onSubmit={handleSubmit}>
-              <input type="text" className="form-control mb-3" placeholder="Nombre completo" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-              <input type="email" className="form-control mb-3" placeholder="Correo electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              <input type="password" className="form-control mb-4" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-              <button type="submit" className="btn btn-dark w-100">Registrarse</button>
-            </form>
-            <p className="text-center mt-3 mb-0">
-              ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
-            </p>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+      <div className="card-modern p-5" style={{ width: '100%', maxWidth: 420 }}>
+        <div className="text-center mb-5">
+          <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{ width: 48, height: 48, background: '#0f172a', borderRadius: 12 }}>
+            <i className="bi bi-person-plus-fill text-white" style={{ fontSize: '1.25rem' }}></i>
           </div>
+          <h3 className="fw-bold mb-1" style={{ color: 'var(--slate-900)' }}>Crear Cuenta</h3>
+          <p className="mb-0" style={{ color: 'var(--slate-500)', fontSize: '.875rem' }}>Regístrate como estudiante</p>
         </div>
+
+        {error && <div className="alert-modern mb-4" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{error}</div>}
+        {success && <div className="alert-modern mb-4" style={{ background: 'var(--success-light)', color: 'var(--success)' }}>{success}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="label-modern">Nombre completo</label>
+            <input type="text" className="input-modern" placeholder="Juan Pérez" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+          </div>
+          <div className="mb-3">
+            <label className="label-modern">Correo electrónico</label>
+            <input type="email" className="input-modern" placeholder="estudiante@isil.pe" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
+          <div className="mb-4">
+            <label className="label-modern">Contraseña</label>
+            <input type="password" className="input-modern" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
+          <button type="submit" className="btn-modern btn-primary-modern w-100">Crear Cuenta</button>
+        </form>
+        <p className="text-center mt-4 mb-0" style={{ color: 'var(--slate-500)', fontSize: '.875rem' }}>
+          ¿Ya tienes cuenta? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Inicia sesión</Link>
+        </p>
       </div>
     </div>
   );

@@ -17,44 +17,59 @@ export default async function CourseDetail({ params }: { params: Promise<{ id: s
 
   if (!course) {
     return (
-      <div className="container mt-5 text-center">
-        <h2>Curso no encontrado</h2>
-        <a href="/" className="btn btn-dark mt-3">Volver al catálogo</a>
+      <div className="container text-center py-5" style={{ color: 'var(--slate-500)' }}>
+        <i className="bi bi-emoji-frown" style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}></i>
+        <h5 style={{ fontWeight: 600 }}>Curso no encontrado</h5>
+        <a href="/" className="btn-modern btn-primary-modern mt-3 d-inline-flex">Volver al catálogo</a>
       </div>
     );
   }
 
   return (
-    <div className="bg-light min-vh-100 pb-5">
-      <div className="bg-dark text-white py-5 mb-5 shadow-sm">
-        <div className="container">
-          <a href="/" className="text-secondary text-decoration-none mb-3 d-inline-block">&larr; Volver al catálogo</a>
-          <h1 className="display-5 fw-bolder">{course.titulo}</h1>
-        </div>
-      </div>
+    <div className="container py-4">
+      <a href="/" className="d-inline-flex align-items-center gap-1 mb-4" style={{ color: 'var(--slate-500)', fontSize: '.875rem', textDecoration: 'none' }}>
+        <i className="bi bi-arrow-left"></i>Volver al catálogo
+      </a>
 
-      <div className="container">
-        <div className="row g-4">
-          <div className="col-lg-8">
-            <div className="card shadow-sm border-0 rounded-4 p-4">
-              <h4 className="fw-bold mb-3">Descripción del Curso</h4>
-              <p className="text-muted lead">{course.descripcion}</p>
-            </div>
+      <div className="row g-4">
+        <div className="col-lg-8">
+          <div className="card-modern p-4">
+            <span className="badge-modern mb-3" style={{ background: 'var(--primary-light)', color: 'var(--primary)', fontSize: '.6875rem' }}>Detalle del curso</span>
+            <h2 className="fw-bold mb-3" style={{ color: 'var(--slate-900)', fontSize: '1.75rem', letterSpacing: '-.01em' }}>{course.titulo}</h2>
+            <p style={{ color: 'var(--slate-500)', fontSize: '1rem', lineHeight: 1.7 }}>{course.descripcion}</p>
           </div>
-          <div className="col-lg-4">
-            <div className="card shadow-sm border-0 rounded-4 p-4">
-              <h5 className="fw-bold mb-3">Información</h5>
-              <hr />
-              <p><strong>Profesor:</strong> {course.profesor?.nombre || 'Por asignar'}</p>
-              {course.profesor?.especialidad && (
-                <p><strong>Especialidad:</strong> {course.profesor.especialidad}</p>
-              )}
-              <p><strong>Inscritos:</strong> {course.estudiantes?.length || 0}</p>
-              <hr />
-              <a href={`${PORTAL_URL}/login`} className="btn btn-dark w-100 rounded-pill fw-semibold">
-                Inscribirse Ahora
-              </a>
+        </div>
+
+        <div className="col-lg-4">
+          <div className="card-modern p-4" style={{ position: 'sticky', top: '5rem' }}>
+            <h5 className="fw-bold mb-3" style={{ color: 'var(--slate-900)' }}>Información</h5>
+            <hr style={{ borderColor: 'var(--slate-200)', margin: '1rem 0' }} />
+
+            <div className="mb-3">
+              <div style={{ color: 'var(--slate-500)', fontSize: '.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.05em' }}>Profesor</div>
+              <div style={{ color: 'var(--slate-900)', fontWeight: 600, fontSize: '.9375rem' }}>{course.profesor?.nombre || 'Por asignar'}</div>
             </div>
+
+            {course.profesor?.especialidad && (
+              <div className="mb-3">
+                <div style={{ color: 'var(--slate-500)', fontSize: '.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.05em' }}>Especialidad</div>
+                <div style={{ color: 'var(--slate-900)', fontSize: '.9375rem' }}>{course.profesor.especialidad}</div>
+              </div>
+            )}
+
+            <div className="mb-3">
+              <div style={{ color: 'var(--slate-500)', fontSize: '.75rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.05em' }}>Inscritos</div>
+              <div style={{ color: 'var(--slate-900)', fontWeight: 600, fontSize: '.9375rem' }}>{course.estudiantes?.length || 0} estudiantes</div>
+            </div>
+
+            <hr style={{ borderColor: 'var(--slate-200)', margin: '1rem 0' }} />
+
+            <a href={`${PORTAL_URL}/register`} className="btn-modern btn-primary-modern w-100">
+              <i className="bi bi-plus-circle me-1"></i>Inscribirme ahora
+            </a>
+            <p style={{ color: 'var(--slate-500)', fontSize: '.75rem', marginTop: '.75rem', marginBottom: 0, textAlign: 'center' }}>
+              ¿Ya tienes cuenta? <a href={`${PORTAL_URL}/login`} style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Inicia sesión</a>
+            </p>
           </div>
         </div>
       </div>

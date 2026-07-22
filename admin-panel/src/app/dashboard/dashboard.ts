@@ -10,96 +10,112 @@ import { ProfesoresComponent } from '../profesores/profesores';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ProfesoresComponent],
   template: `
-    <nav class="navbar navbar-dark bg-dark mb-4">
-      <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Panel Administrativo</span>
-        <div class="d-flex align-items-center gap-3">
-          <span class="text-light small">Admin</span>
-          <button class="btn btn-outline-light btn-sm" (click)="logout()">Cerrar Sesión</button>
-        </div>
+    <nav class="navbar-modern">
+      <div class="container d-flex align-items-center justify-content-between">
+        <span class="fw-bold" style="font-size: 1.1rem; color: var(--slate-900);">
+          <i class="bi bi-grid-fill me-2" style="color: var(--primary);"></i>Panel Administrativo
+        </span>
+        <button class="btn-modern btn-outline-modern" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i>Salir
+        </button>
       </div>
     </nav>
 
-    <div class="container">
-      <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-          <button class="nav-link" [class.active]="tab === 'cursos'" (click)="tab = 'cursos'">Cursos</button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link" [class.active]="tab === 'profesores'" (click)="tab = 'profesores'">Profesores</button>
-        </li>
-      </ul>
+    <div class="container py-4">
+      <div class="d-flex gap-2 mb-4">
+        <button class="tab-modern" [class.active]="tab === 'cursos'" (click)="tab = 'cursos'">
+          <i class="bi bi-book me-1"></i>Cursos
+        </button>
+        <button class="tab-modern" [class.active]="tab === 'profesores'" (click)="tab = 'profesores'">
+          <i class="bi bi-people me-1"></i>Profesores
+        </button>
+      </div>
 
       @if (tab === 'cursos') {
-        <div class="row">
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm border-0 bg-light p-3">
-              <h4>{{ editandoCurso ? 'Editar' : 'Crear Nuevo' }} Curso</h4>
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="card-modern p-4">
+              <h5 class="fw-bold mb-3" style="color: var(--slate-900);">
+                <i class="bi bi-plus-circle me-1" style="color: var(--primary);"></i>
+                {{ editandoCurso ? 'Editar' : 'Nuevo' }} Curso
+              </h5>
               @if (errorMsg) {
-                <div class="alert alert-danger py-1">{{ errorMsg }}</div>
+                <div class="alert-modern mb-3" style="background: var(--danger-light); color: var(--danger);">{{ errorMsg }}</div>
               }
               @if (successMsg) {
-                <div class="alert alert-success py-1">{{ successMsg }}</div>
+                <div class="alert-modern mb-3" style="background: var(--success-light); color: var(--success);">{{ successMsg }}</div>
               }
               <form [formGroup]="cursoForm" (ngSubmit)="guardarCurso()">
                 <div class="mb-3">
-                  <label class="form-label">Título del Curso</label>
-                  <input type="text" class="form-control" formControlName="titulo" placeholder="Ej. Programación Web">
+                  <label class="label-modern">Título</label>
+                  <input type="text" class="input-modern w-100" formControlName="titulo" placeholder="Ej. Programación Web">
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Descripción</label>
-                  <textarea class="form-control" formControlName="descripcion" rows="3"></textarea>
+                  <label class="label-modern">Descripción</label>
+                  <textarea class="input-modern w-100" formControlName="descripcion" rows="3" style="resize: vertical; min-height: 80px;"></textarea>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Profesor</label>
-                  <select class="form-select" formControlName="profesor">
+                  <label class="label-modern">Profesor</label>
+                  <select class="input-modern w-100" formControlName="profesor">
                     <option value="">Sin asignar</option>
                     @for (p of profesores; track p._id) {
-                      <option [value]="p._id">{{ p.nombre }} - {{ p.especialidad }}</option>
+                      <option [value]="p._id">{{ p.nombre }} — {{ p.especialidad }}</option>
                     }
                   </select>
                 </div>
                 <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-primary w-100" [disabled]="cursoForm.invalid">
+                  <button type="submit" class="btn-modern btn-primary-modern w-100" [disabled]="cursoForm.invalid">
                     {{ editandoCurso ? 'Actualizar' : 'Guardar' }}
                   </button>
                   @if (editandoCurso) {
-                    <button type="button" class="btn btn-secondary" (click)="cancelarEdicionCurso()">Cancelar</button>
+                    <button type="button" class="btn-modern btn-outline-modern" (click)="cancelarEdicionCurso()">Cancelar</button>
                   }
                 </div>
               </form>
             </div>
           </div>
 
-          <div class="col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="mb-0">Cursos Activos</h4>
-              <input type="text" class="form-control w-auto" placeholder="Buscar cursos..." (input)="buscarCursos($event)">
+          <div class="col-lg-8">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+              <h5 class="fw-bold mb-0" style="color: var(--slate-900);">
+                <i class="bi bi-collection me-1" style="color: var(--primary);"></i>Cursos Activos
+              </h5>
+              <input type="text" class="input-modern" placeholder="Buscar cursos..." style="width: 240px;" (input)="buscarCursos($event)">
             </div>
-            <div class="list-group shadow-sm">
-              @for (curso of cursosFiltrados; track curso._id) {
-                <div class="list-group-item">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                      <div class="fw-bold">{{ curso.titulo }}</div>
-                      <small class="text-muted">{{ curso.descripcion }}</small>
-                      @if (curso.profesor?.nombre) {
-                        <br><small class="text-secondary">Profesor: {{ curso.profesor.nombre }}</small>
-                      }
-                    </div>
-                    <div class="text-end">
-                      <span class="badge bg-secondary rounded-pill">{{ curso.estudiantes?.length || 0 }} inscritos</span>
-                      <div class="mt-2">
-                        <button class="btn btn-sm btn-outline-primary me-1" (click)="editarCurso(curso)">Editar</button>
-                        <button class="btn btn-sm btn-outline-danger" (click)="eliminarCurso(curso._id)">Eliminar</button>
+
+            @for (curso of cursosFiltrados; track curso._id) {
+              <div class="list-item-modern">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold mb-1" style="color: var(--slate-900);">{{ curso.titulo }}</div>
+                    <div style="color: var(--slate-500); font-size: .8125rem;">{{ curso.descripcion }}</div>
+                    @if (curso.profesor?.nombre) {
+                      <div class="mt-1" style="color: var(--slate-500); font-size: .75rem;">
+                        <i class="bi bi-person me-1"></i>{{ curso.profesor.nombre }}
                       </div>
+                    }
+                  </div>
+                  <div class="text-end flex-shrink-0">
+                    <span class="badge-modern" style="background: var(--primary-light); color: var(--primary);">
+                      {{ curso.estudiantes?.length || 0 }} inscritos
+                    </span>
+                    <div class="mt-2 d-flex gap-1">
+                      <button class="btn-modern btn-outline-modern" style="padding: .375rem .75rem; font-size: .8125rem;" (click)="editarCurso(curso)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn-modern btn-outline-modern" style="padding: .375rem .75rem; font-size: .8125rem; color: var(--danger); border-color: transparent;" (click)="eliminarCurso(curso._id)">
+                        <i class="bi bi-trash"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
-              } @empty {
-                <li class="list-group-item text-muted">No hay cursos registrados.</li>
-              }
-            </div>
+              </div>
+            } @empty {
+              <div class="text-center py-5" style="color: var(--slate-500);">
+                <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
+                No hay cursos registrados
+              </div>
+            }
           </div>
         </div>
       }
