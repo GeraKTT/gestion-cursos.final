@@ -3,7 +3,7 @@
 ## Implementado
 
 - [x] **Helmet**: Middleware que establece cabeceras HTTP de seguridad (X-Content-Type-Options, X-Frame-Options, etc.)
-- [x] **CORS restringido**: Solo orígenes permitidos (localhost:4200, 3001, 3002 y FRONTEND_URL)
+- [x] **CORS restringido**: Solo orígenes permitidos (localhost:4200, 3001, 3002, admin-panel-xi-plum.vercel.app, catalogo-publico-phi.vercel.app, portal-estudiante.vercel.app)
 - [x] **JWT**: Tokens con expiry de 2 horas para autenticación
 - [x] **bcrypt**: Passwords hasheados con 10 salt rounds
 - [x] **Roles**: Middleware verifyRole para administrador/estudiante
@@ -25,10 +25,5 @@
 
 ## Reporte Lighthouse
 
-Se realizó auditoría Lighthouse en la aplicación desplegada con los siguientes resultados:
-- Performance: 85+
-- Accessibility: 90+
-- Best Practices: 90+
-- SEO: 95+
-
-(Completar con valores reales después del despliegue)
+Se realizó auditoría Lighthouse en la aplicación desplegada.
+Resultados disponibles en `docs/lighthouse.pdf`.

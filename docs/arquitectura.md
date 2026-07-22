@@ -3,7 +3,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     MongoDB Atlas                           │
-│            (gestion-cursos-1 database)                      │
+│            (gestion-cursos database)                         │
 │  Collections: users, courses, profesors                    │
 └──────────────────────┬──────────────────────────────────────┘
                        │ mongoose.connect()
