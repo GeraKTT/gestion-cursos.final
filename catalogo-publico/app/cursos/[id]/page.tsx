@@ -50,7 +50,7 @@ export default async function CourseDetail({ params }: { params: Promise<{ id: s
               )}
               <p><strong>Inscritos:</strong> {course.estudiantes?.length || 0}</p>
               <hr />
-              <a href="http://localhost:3001/login" className="btn btn-dark w-100 rounded-pill fw-semibold">
+              <a href="https://portal-estudiante.vercel.app/login" className="btn btn-dark w-100 rounded-pill fw-semibold">
                 Inscribirse Ahora
               </a>
             </div>

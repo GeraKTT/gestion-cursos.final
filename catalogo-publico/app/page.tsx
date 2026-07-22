@@ -62,7 +62,7 @@ export default async function Catalog({
                       <a href={`/cursos/${course._id}`} className="btn btn-outline-dark rounded-pill fw-semibold">
                         Ver Detalle
                       </a>
-                      <a href="http://localhost:3001/register" className="btn btn-dark rounded-pill fw-semibold shadow-sm">
+                      <a href="https://portal-estudiante.vercel.app/register" className="btn btn-dark rounded-pill fw-semibold shadow-sm">
                         Inscribirse Ahora
                       </a>
                     </div>

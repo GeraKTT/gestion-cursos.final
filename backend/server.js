@@ -10,7 +10,9 @@ const allowedOrigins = [
   'http://localhost:4200',
   'http://localhost:3001',
   'http://localhost:3002',
-  process.env.FRONTEND_URL
+  'https://admin-panel-xi-plum.vercel.app',
+  'https://catalogo-publico-phi.vercel.app',
+  'https://portal-estudiante.vercel.app'
 ].filter(Boolean);
 
 app.use(helmet());
