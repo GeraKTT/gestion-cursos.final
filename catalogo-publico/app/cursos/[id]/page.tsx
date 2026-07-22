@@ -1,4 +1,5 @@
 const API = process.env.API_URL || 'http://localhost:3000/api';
+const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL || 'http://localhost:3001';
 
 async function getCourse(id: string) {
   try {
@@ -50,7 +51,7 @@ export default async function CourseDetail({ params }: { params: Promise<{ id: s
               )}
               <p><strong>Inscritos:</strong> {course.estudiantes?.length || 0}</p>
               <hr />
-              <a href="https://portal-estudiante.vercel.app/login" className="btn btn-dark w-100 rounded-pill fw-semibold">
+              <a href={`${PORTAL_URL}/login`} className="btn btn-dark w-100 rounded-pill fw-semibold">
                 Inscribirse Ahora
               </a>
             </div>
