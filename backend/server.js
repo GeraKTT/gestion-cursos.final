@@ -6,33 +6,50 @@ const helmet = require('helmet');
 
 const app = express();
 
-// Seguridad y Middlewares 
-app.use(helmet()); 
-app.use(cors()); 
-app.use(express.json());
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:3001',
+  'http://localhost:3002',
+  process.env.FRONTEND_URL
+].filter(Boolean);
 
-// Importar rutas
+app.use(helmet());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true
+}));
+app.use(express.json({ limit: '10kb' }));
+
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');
 const profesoresRoutes = require('./routes/profesores');
 
-// Rutas API REST modular 
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/profesores', profesoresRoutes);
 
-// Conexión base de datos
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Conectado a la base de datos de forma exitosa'))
+  .then(() => console.log('Conectado a MongoDB Atlas exitosamente'))
   .catch(err => console.error('Error de conexión a MongoDB:', err));
 
-// Middleware manejo de errores 
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  if (err.message === 'No permitido por CORS') {
+    return res.status(403).json({ error: 'Origen no permitido' });
+  }
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// Inicialización del servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
