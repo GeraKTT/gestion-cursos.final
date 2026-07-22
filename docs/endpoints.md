@@ -1,6 +1,6 @@
 # Endpoints de la API REST
 
-Base URL: `https://gestion-cursos-backend.onrender.com/api`
+Base URL: `https://gestion-cursos-final.onrender.com/api`
 
 ## Autenticación
 

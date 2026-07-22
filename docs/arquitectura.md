@@ -10,7 +10,7 @@
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
 │              Backend (Node.js + Express)                      │
-│  Render: gestion-cursos-backend.onrender.com                 │
+│  Render: gestion-cursos-final.onrender.com                 │
 │                                                               │
 │  Middlewares: helmet, cors, express.json                      │
 │  Auth: JWT (2h), bcrypt, verifyToken, verifyRole             │

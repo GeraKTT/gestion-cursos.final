@@ -41,8 +41,8 @@ Visitar [docs/arquitectura.md](docs/arquitectura.md) para el diagrama completo.
 | Admin Panel (Angular) | https://admin-panel-xi-plum.vercel.app |
 | Catálogo Público (Next.js) | https://catalogo-publico-phi.vercel.app |
 | Portal Estudiante (React) | https://portal-estudiante.vercel.app |
-| Backend API (Express) | https://gestion-cursos-backend.onrender.com |
-| Health Check | https://gestion-cursos-backend.onrender.com/api/health |
+| Backend API (Express) | https://gestion-cursos-final.onrender.com |
+| Health Check | https://gestion-cursos-final.onrender.com/api/health |
 
 ---
 
