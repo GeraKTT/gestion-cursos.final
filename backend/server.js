@@ -36,6 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/profesores', profesoresRoutes);
 
+app.get('/', (req, res) => res.json({ status: 'ok', message: 'API de Gestión de Cursos' }));
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
