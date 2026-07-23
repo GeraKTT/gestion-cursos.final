@@ -8,24 +8,32 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const res = await fetch(`${API}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
 
-    if (res.ok) {
-      login(data.token, data.user);
-      navigate('/dashboard');
-    } else {
-      setError(data.error || 'Credenciales incorrectas');
+      if (res.ok) {
+        login(data.token, data.user);
+        navigate('/dashboard');
+      } else {
+        setError(data.error || 'Credenciales incorrectas');
+      }
+    } catch {
+      setError('Error de conexión. Verifica el servidor.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,7 +59,9 @@ export default function Login() {
             <label className="label-modern">Contraseña</label>
             <input type="password" className="input-modern" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-          <button type="submit" className="btn-modern btn-primary-modern w-100">Ingresar</button>
+          <button type="submit" className="btn-modern btn-primary-modern w-100" disabled={loading}>
+            {loading && <span className="spinner-border spinner-border-sm me-1"></span>}Ingresar
+          </button>
         </form>
         <p className="text-center mt-4 mb-0" style={{ color: 'var(--slate-500)', fontSize: '.875rem' }}>
           ¿No tienes cuenta? <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Regístrate</Link>

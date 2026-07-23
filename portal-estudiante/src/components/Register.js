@@ -9,25 +9,32 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, password, rol: 'estudiante' })
+      });
+      const data = await res.json();
 
-    const res = await fetch(`${API}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, password, rol: 'estudiante' })
-    });
-    const data = await res.json();
-
-    if (res.ok) {
-      setSuccess('Registro exitoso. Redirigiendo al login...');
-      setTimeout(() => navigate('/login'), 2000);
-    } else {
-      setError(data.error || 'Error al registrarse');
+      if (res.ok) {
+        setSuccess('Registro exitoso. Redirigiendo al login...');
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
+        setError(data.error || 'Error al registrarse');
+      }
+    } catch {
+      setError('Error de conexión. Verifica el servidor.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,7 +65,9 @@ export default function Register() {
             <label className="label-modern">Contraseña</label>
             <input type="password" className="input-modern" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-          <button type="submit" className="btn-modern btn-primary-modern w-100">Crear Cuenta</button>
+          <button type="submit" className="btn-modern btn-primary-modern w-100" disabled={loading}>
+            {loading && <span className="spinner-border spinner-border-sm me-1"></span>}Crear Cuenta
+          </button>
         </form>
         <p className="text-center mt-4 mb-0" style={{ color: 'var(--slate-500)', fontSize: '.875rem' }}>
           ¿Ya tienes cuenta? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Inicia sesión</Link>

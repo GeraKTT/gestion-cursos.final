@@ -38,7 +38,8 @@ import { ApiService } from '../api';
               <small style="color: var(--danger); font-size: .75rem;">La contraseña es obligatoria</small>
             }
           </div>
-          <button type="submit" class="btn-modern btn-primary-modern w-100" [disabled]="loginForm.invalid">
+          <button type="submit" class="btn-modern btn-primary-modern w-100" [disabled]="loginForm.invalid || loading">
+            @if (loading) { <span class="spinner-border spinner-border-sm me-1"></span> }
             Iniciar Sesión
           </button>
         </form>
@@ -49,6 +50,7 @@ import { ApiService } from '../api';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMsg = '';
+  loading = false;
 
   constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -60,13 +62,16 @@ export class LoginComponent {
   onSubmit() {
     this.errorMsg = '';
     if (this.loginForm.valid) {
+      this.loading = true;
       this.api.login(this.loginForm.value).subscribe({
         next: (res) => {
+          this.loading = false;
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
+          this.loading = false;
           this.errorMsg = err.error?.error || 'Credenciales incorrectas o error de servidor';
         }
       });

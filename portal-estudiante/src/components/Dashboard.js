@@ -9,21 +9,40 @@ export default function Dashboard() {
   const [misCursos, setMisCursos] = useState([]);
   const [tab, setTab] = useState('disponibles');
   const [error, setError] = useState('');
+  const [loadingCursos, setLoadingCursos] = useState(true);
+  const [loadingMisCursos, setLoadingMisCursos] = useState(true);
+  const [errorCursos, setErrorCursos] = useState('');
 
   const cargarCursos = async () => {
-    const res = await fetch(`${API}/courses`);
-    const data = await res.json();
-    setCursos(data);
+    setLoadingCursos(true);
+    setErrorCursos('');
+    try {
+      const res = await fetch(`${API}/courses`);
+      if (!res.ok) throw new Error('Error al cargar cursos');
+      const data = await res.json();
+      setCursos(data);
+    } catch {
+      setErrorCursos('No se pudieron cargar los cursos. Verifica la conexión.');
+    } finally {
+      setLoadingCursos(false);
+    }
   };
 
   const cargarMisCursos = async () => {
+    setLoadingMisCursos(true);
     const token = localStorage.getItem('token');
-    const res = await fetch(`${API}/courses/student/my-enrollments`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setMisCursos(data);
+    try {
+      const res = await fetch(`${API}/courses/student/my-enrollments`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMisCursos(data);
+      }
+    } catch {
+      // silencioso — no bloquear la UI por esto
+    } finally {
+      setLoadingMisCursos(false);
     }
   };
 
@@ -34,16 +53,20 @@ export default function Dashboard() {
 
   const inscribirse = async (id) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`${API}/courses/${id}/enroll`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setError('');
-      cargarMisCursos();
-    } else {
-      setError(data.error || 'Error al inscribirse');
+    try {
+      const res = await fetch(`${API}/courses/${id}/enroll`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setError('');
+        cargarMisCursos();
+      } else {
+        setError(data.error || 'Error al inscribirse');
+      }
+    } catch {
+      setError('Error de conexión al inscribirse');
     }
   };
 
@@ -91,7 +114,22 @@ export default function Dashboard() {
 
         {tab === 'disponibles' ? (
           <div className="row g-4">
-            {cursosDisponibles.length === 0 ? (
+            {loadingCursos ? (
+              <div className="col-12">
+                <div className="text-center py-5" style={{ color: 'var(--slate-500)' }}>
+                  <div className="spinner-border mb-3" role="status" style={{ width: '2rem', height: '2rem' }}></div>
+                  <div>Cargando cursos...</div>
+                </div>
+              </div>
+            ) : errorCursos ? (
+              <div className="col-12">
+                <div className="text-center py-5" style={{ color: 'var(--danger)' }}>
+                  <i className="bi bi-exclamation-triangle" style={{ fontSize: '2rem', display: 'block', marginBottom: '.5rem' }}></i>
+                  {errorCursos}
+                  <button className="btn-modern btn-outline-modern d-inline-flex mt-3" onClick={cargarCursos}>Reintentar</button>
+                </div>
+              </div>
+            ) : cursosDisponibles.length === 0 ? (
               <div className="col-12">
                 <div className="text-center py-5" style={{ color: 'var(--slate-500)' }}>
                   <i className="bi bi-emoji-smile" style={{ fontSize: '2.5rem', display: 'block', marginBottom: '.5rem' }}></i>
@@ -124,7 +162,14 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="row g-4">
-            {misCursos.length === 0 ? (
+            {loadingMisCursos ? (
+              <div className="col-12">
+                <div className="text-center py-5" style={{ color: 'var(--slate-500)' }}>
+                  <div className="spinner-border mb-3" role="status" style={{ width: '2rem', height: '2rem' }}></div>
+                  <div>Cargando inscripciones...</div>
+                </div>
+              </div>
+            ) : misCursos.length === 0 ? (
               <div className="col-12">
                 <div className="text-center py-5" style={{ color: 'var(--slate-500)' }}>
                   <i className="bi bi-inbox" style={{ fontSize: '2.5rem', display: 'block', marginBottom: '.5rem' }}></i>
