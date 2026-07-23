@@ -4,6 +4,12 @@ Proyecto integral desarrollado como evaluación para el curso de Programación W
 
 ---
 
+## Video de Sustentación
+
+[(https://youtube.com)](https://youtu.be/3rkDosMWt9Q) 
+
+---
+
 ## Problema
 Las instituciones educativas necesitan una plataforma centralizada que permita a los estudiantes consultar cursos, inscribirse y visualizar sus inscripciones, mientras que los administradores gestionan la información académica.
 
@@ -125,16 +131,8 @@ Ver [docs/endpoints.md](docs/endpoints.md) para la documentación completa.
 
 | Nombre | Rol |
 |---|---|
-| Geraldine Tudela | Backend + Angular |
-| [Nombre 2] | React + Context API |
-| [Nombre 3] | Next.js + Despliegue |
-| [Nombre 4] | Documentación + Seguridad |
-
----
-
-## Video de Sustentación
-
-[Enlace de YouTube](https://youtube.com) (12-15 min, no listado)
+| Guillermo Aliaga | Backend + Angular + Next.js + Despliegue|
+| Geraldine Tudela | React + Context API + Documentación + Seguridad|
 
 ---
 
@@ -144,6 +142,4 @@ Ver [docs/endpoints.md](docs/endpoints.md) para la documentación completa.
 
 ---
 
-## Licencia
 
-Proyecto académico - ISIL 2026
