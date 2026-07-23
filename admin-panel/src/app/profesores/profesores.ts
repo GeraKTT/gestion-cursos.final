@@ -50,13 +50,25 @@ import { ApiService } from '../api';
         <h5 class="fw-bold mb-3" style="color: var(--slate-900);">
           <i class="bi bi-people me-1" style="color: var(--primary);"></i>Profesores Registrados
         </h5>
-        @if (profesores.length === 0) {
+        @if (loading) {
           <div class="text-center py-5" style="color: var(--slate-500);">
-            <i class="bi bi-person" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
-            No hay profesores registrados
+            <div class="spinner-border mb-3" role="status" style="width: 2rem; height: 2rem;"></div>
+            <div>Cargando profesores...</div>
           </div>
-        }
-        @for (p of profesores; track p._id) {
+        } @else if (errorCarga) {
+          <div class="text-center py-5" style="color: var(--danger);">
+            <i class="bi bi-exclamation-triangle" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
+            {{ errorCarga }}
+            <button class="btn-modern btn-outline-modern d-inline-flex mt-3" (click)="cargarProfesores()">Reintentar</button>
+          </div>
+        } @else {
+          @if (profesores.length === 0) {
+            <div class="text-center py-5" style="color: var(--slate-500);">
+              <i class="bi bi-person" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
+              No hay profesores registrados
+            </div>
+          }
+          @for (p of profesores; track p._id) {
           <div class="list-item-modern d-flex justify-content-between align-items-center">
             <div>
               <div class="fw-semibold" style="color: var(--slate-900);">{{ p.nombre }}</div>
@@ -74,6 +86,7 @@ import { ApiService } from '../api';
             </div>
           </div>
         }
+        }
       </div>
     </div>
   `
@@ -85,6 +98,8 @@ export class ProfesoresComponent implements OnInit {
   editandoId: string | null = null;
   errorMsg = '';
   successMsg = '';
+  loading = true;
+  errorCarga = '';
 
   constructor(private fb: FormBuilder, private api: ApiService) {
     this.profesorForm = this.fb.group({
@@ -99,9 +114,18 @@ export class ProfesoresComponent implements OnInit {
   }
 
   cargarProfesores() {
+    this.loading = true;
+    this.errorCarga = '';
     this.api.getProfesores().subscribe({
-      next: (res) => this.profesores = res,
-      error: () => this.errorMsg = 'Error al cargar profesores'
+      next: (res) => {
+        this.profesores = res;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.errorCarga = 'Error al cargar profesores. Verifica la conexión con el servidor.';
+        this.errorMsg = this.errorCarga;
+      }
     });
   }
 
