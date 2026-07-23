@@ -21,13 +21,22 @@ import { ProfesoresComponent } from '../profesores/profesores';
       </div>
     </nav>
 
-    <div class="container py-4">
+        <div class="container py-4">
+      @if (errorMsg) {
+        <div class="alert-modern mb-4 d-flex justify-content-between align-items-center" style="background: var(--danger-light); color: var(--danger);">
+          <span><i class="bi bi-exclamation-triangle me-1"></i>{{ errorMsg }}</span>
+          <button type="button" style="background: none; border: none; color: inherit; font-size: 1.25rem; cursor: pointer;" (click)="errorMsg = ''">&times;</button>
+        </div>
+      }
+
       <div class="d-flex gap-2 mb-4">
         <button class="tab-modern" [class.active]="tab === 'cursos'" (click)="tab = 'cursos'">
           <i class="bi bi-book me-1"></i>Cursos
+          @if (loadingCursos) { <span class="spinner-border spinner-border-sm ms-1" style="width: .75rem; height: .75rem;"></span> }
         </button>
         <button class="tab-modern" [class.active]="tab === 'profesores'" (click)="tab = 'profesores'">
           <i class="bi bi-people me-1"></i>Profesores
+          @if (loadingProfesores) { <span class="spinner-border spinner-border-sm ms-1" style="width: .75rem; height: .75rem;"></span> }
         </button>
       </div>
 
@@ -39,9 +48,6 @@ import { ProfesoresComponent } from '../profesores/profesores';
                 <i class="bi bi-plus-circle me-1" style="color: var(--primary);"></i>
                 {{ editandoCurso ? 'Editar' : 'Nuevo' }} Curso
               </h5>
-              @if (errorMsg) {
-                <div class="alert-modern mb-3" style="background: var(--danger-light); color: var(--danger);">{{ errorMsg }}</div>
-              }
               @if (successMsg) {
                 <div class="alert-modern mb-3" style="background: var(--success-light); color: var(--success);">{{ successMsg }}</div>
               }
@@ -83,7 +89,19 @@ import { ProfesoresComponent } from '../profesores/profesores';
               <input type="text" class="input-modern" placeholder="Buscar cursos..." style="width: 240px;" (input)="buscarCursos($event)">
             </div>
 
-            @for (curso of cursosFiltrados; track curso._id) {
+            @if (loadingCursos) {
+              <div class="text-center py-5" style="color: var(--slate-500);">
+                <div class="spinner-border mb-3" role="status" style="width: 2rem; height: 2rem;"></div>
+                <div>Cargando cursos...</div>
+              </div>
+            } @else if (errorCursos) {
+              <div class="text-center py-5" style="color: var(--danger);">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
+                {{ errorCursos }}
+                <button class="btn-modern btn-outline-modern d-inline-flex mt-3" (click)="cargarCursos()">Reintentar</button>
+              </div>
+            } @else {
+              @for (curso of cursosFiltrados; track curso._id) {
               <div class="list-item-modern">
                 <div class="d-flex justify-content-between align-items-start gap-3">
                   <div class="flex-grow-1">
@@ -110,11 +128,12 @@ import { ProfesoresComponent } from '../profesores/profesores';
                   </div>
                 </div>
               </div>
-            } @empty {
+             } @empty {
               <div class="text-center py-5" style="color: var(--slate-500);">
                 <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
                 No hay cursos registrados
               </div>
+            }
             }
           </div>
         </div>
@@ -136,6 +155,10 @@ export class DashboardComponent implements OnInit {
   errorMsg = '';
   successMsg = '';
   tab: 'cursos' | 'profesores' = 'cursos';
+  loadingCursos = true;
+  loadingProfesores = true;
+  errorCursos = '';
+  errorProfesores = '';
 
   constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
     this.cursoForm = this.fb.group({
@@ -153,19 +176,34 @@ export class DashboardComponent implements OnInit {
   }
 
   cargarCursos() {
+    this.loadingCursos = true;
+    this.errorCursos = '';
     this.api.getCursos().subscribe({
       next: (res) => {
         this.cursos = res;
         this.cursosFiltrados = res;
+        this.loadingCursos = false;
       },
-      error: () => this.errorMsg = 'Error cargando cursos'
+      error: () => {
+        this.loadingCursos = false;
+        this.errorCursos = 'Error al cargar cursos. Verifica la conexión con el servidor.';
+        this.errorMsg = this.errorCursos;
+      }
     });
   }
 
   cargarProfesores() {
+    this.loadingProfesores = true;
+    this.errorProfesores = '';
     this.api.getProfesores().subscribe({
-      next: (res) => this.profesores = res,
-      error: () => {}
+      next: (res) => {
+        this.profesores = res;
+        this.loadingProfesores = false;
+      },
+      error: () => {
+        this.loadingProfesores = false;
+        this.errorProfesores = 'Error al cargar profesores. Verifica la conexión con el servidor.';
+      }
     });
   }
 
