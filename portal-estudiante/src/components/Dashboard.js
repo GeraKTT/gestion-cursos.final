@@ -55,6 +55,7 @@ export default function Dashboard() {
   useEffect(() => {
     cargarCursos();
     cargarMisCursos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const inscribirse = async (id) => {
