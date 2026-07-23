@@ -13,11 +13,17 @@ export default function Dashboard() {
   const [loadingMisCursos, setLoadingMisCursos] = useState(true);
   const [errorCursos, setErrorCursos] = useState('');
 
+  const fetchWithTimeout = (url, options = {}) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 30000);
+    return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+  };
+
   const cargarCursos = async () => {
     setLoadingCursos(true);
     setErrorCursos('');
     try {
-      const res = await fetch(`${API}/courses`);
+      const res = await fetchWithTimeout(`${API}/courses`);
       if (!res.ok) throw new Error('Error al cargar cursos');
       const data = await res.json();
       setCursos(data);
@@ -32,7 +38,7 @@ export default function Dashboard() {
     setLoadingMisCursos(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${API}/courses/student/my-enrollments`, {
+      const res = await fetchWithTimeout(`${API}/courses/student/my-enrollments`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -54,7 +60,7 @@ export default function Dashboard() {
   const inscribirse = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${API}/courses/${id}/enroll`, {
+      const res = await fetchWithTimeout(`${API}/courses/${id}/enroll`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

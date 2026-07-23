@@ -4,6 +4,12 @@ import { AuthContext } from '../context/AuthContext';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
+const fetchWithTimeout = (url, options = {}) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), 30000);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+};
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +23,7 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`${API}/auth/login`, {
+      const res = await fetchWithTimeout(`${API}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

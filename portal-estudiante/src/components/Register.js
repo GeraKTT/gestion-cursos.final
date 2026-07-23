@@ -3,6 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
+const fetchWithTimeout = (url, options = {}) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), 30000);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+};
+
 export default function Register() {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
@@ -18,7 +24,7 @@ export default function Register() {
     setSuccess('');
     setLoading(true);
     try {
-      const res = await fetch(`${API}/auth/register`, {
+      const res = await fetchWithTimeout(`${API}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, email, password, rol: 'estudiante' })
