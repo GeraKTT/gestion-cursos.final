@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../api';
-import { ProfesoresComponent } from '../profesores/profesores';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ProfesoresComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <nav class="navbar-modern">
       <div class="container d-flex align-items-center justify-content-between">
@@ -140,13 +139,82 @@ import { ProfesoresComponent } from '../profesores/profesores';
       }
 
       @if (tab === 'profesores') {
-        <app-profesores />
+        <div class="row g-4">
+          <div class="col-lg-5">
+            <div class="card-modern p-4">
+              <h5 class="fw-bold mb-3" style="color: var(--slate-900);">
+                <i class="bi bi-person-plus me-1" style="color: var(--primary);"></i>
+                Nuevo Profesor
+              </h5>
+              <form [formGroup]="profesorForm" (ngSubmit)="guardarProfesor()">
+                <div class="mb-3">
+                  <label class="label-modern">Nombre</label>
+                  <input type="text" class="input-modern w-100" formControlName="nombreProfesor" placeholder="Nombre completo">
+                </div>
+                <div class="mb-3">
+                  <label class="label-modern">Especialidad</label>
+                  <input type="text" class="input-modern w-100" formControlName="especialidadProfesor" placeholder="Ej. Redes">
+                </div>
+                <div class="mb-3">
+                  <label class="label-modern">Correo</label>
+                  <input type="email" class="input-modern w-100" formControlName="correoProfesor" placeholder="profesor@isil.pe">
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn-modern btn-primary-modern w-100" [disabled]="profesorForm.invalid">
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-lg-7">
+            <h5 class="fw-bold mb-3" style="color: var(--slate-900);">
+              <i class="bi bi-people me-1" style="color: var(--primary);"></i>Profesores Registrados
+            </h5>
+            @if (loadingProfesores) {
+              <div class="text-center py-5" style="color: var(--slate-500);">
+                <div class="spinner-border mb-3" role="status" style="width: 2rem; height: 2rem;"></div>
+                <div>Cargando profesores...</div>
+              </div>
+            } @else if (errorProfesores) {
+              <div class="text-center py-5" style="color: var(--danger);">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
+                {{ errorProfesores }}
+                <button class="btn-modern btn-outline-modern d-inline-flex mt-3" (click)="cargarProfesores()">Reintentar</button>
+              </div>
+            } @else {
+              @if (profesores.length === 0) {
+                <div class="text-center py-5" style="color: var(--slate-500);">
+                  <i class="bi bi-person" style="font-size: 2rem; display: block; margin-bottom: .5rem;"></i>
+                  No hay profesores registrados
+                </div>
+              }
+              @for (p of profesores; track p._id) {
+                <div class="list-item-modern d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold" style="color: var(--slate-900);">{{ p.nombre }}</div>
+                    <div style="color: var(--slate-500); font-size: .8125rem;">
+                      {{ p.especialidad }} <span style="color: var(--slate-300);">|</span> {{ p.correo }}
+                    </div>
+                  </div>
+                  <div class="d-flex gap-1">
+                    <button class="btn-modern btn-outline-modern" style="padding: .375rem .75rem; font-size: .8125rem; color: var(--danger); border-color: transparent;" (click)="eliminarProfesor(p._id)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        </div>
       }
     </div>
   `
 })
 export class DashboardComponent implements OnInit {
   cursoForm: FormGroup;
+  profesorForm: FormGroup;
   cursos: any[] = [];
   cursosFiltrados: any[] = [];
   profesores: any[] = [];
@@ -165,6 +233,11 @@ export class DashboardComponent implements OnInit {
       titulo: ['', Validators.required],
       descripcion: ['', Validators.required],
       profesor: ['']
+    });
+    this.profesorForm = this.fb.group({
+      nombreProfesor: ['', Validators.required],
+      especialidadProfesor: ['', Validators.required],
+      correoProfesor: ['', [Validators.required, Validators.email]]
     });
   }
 
@@ -258,6 +331,36 @@ export class DashboardComponent implements OnInit {
       next: () => {
         this.successMsg = 'Curso eliminado';
         this.cargarCursos();
+      },
+      error: (err) => this.errorMsg = err.error?.error || 'Error al eliminar'
+    });
+  }
+
+  guardarProfesor() {
+    if (this.profesorForm.invalid) return;
+    const token = localStorage.getItem('token') || '';
+    const data = {
+      nombre: this.profesorForm.value.nombreProfesor,
+      especialidad: this.profesorForm.value.especialidadProfesor,
+      correo: this.profesorForm.value.correoProfesor
+    };
+    this.api.crearProfesor(data, token).subscribe({
+      next: () => {
+        this.profesorForm.reset();
+        this.successMsg = 'Profesor creado exitosamente';
+        this.cargarProfesores();
+      },
+      error: (err) => this.errorMsg = err.error?.error || 'Error al crear profesor'
+    });
+  }
+
+  eliminarProfesor(id: string) {
+    if (!confirm('¿Eliminar profesor?')) return;
+    const token = localStorage.getItem('token') || '';
+    this.api.eliminarProfesor(id, token).subscribe({
+      next: () => {
+        this.successMsg = 'Profesor eliminado';
+        this.cargarProfesores();
       },
       error: (err) => this.errorMsg = err.error?.error || 'Error al eliminar'
     });
