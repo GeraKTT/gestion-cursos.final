@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -228,7 +228,7 @@ export class DashboardComponent implements OnInit {
   errorCursos = '';
   errorProfesores = '';
 
-  constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
+  constructor(private fb: FormBuilder, private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
     this.cursoForm = this.fb.group({
       titulo: ['', Validators.required],
       descripcion: ['', Validators.required],
@@ -251,16 +251,19 @@ export class DashboardComponent implements OnInit {
   cargarCursos() {
     this.loadingCursos = true;
     this.errorCursos = '';
+    this.cdr.detectChanges();
     this.api.getCursos().subscribe({
       next: (res) => {
         this.cursos = res;
         this.cursosFiltrados = res;
         this.loadingCursos = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loadingCursos = false;
         this.errorCursos = 'Error al cargar cursos. Verifica la conexión con el servidor.';
         this.errorMsg = this.errorCursos;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -268,14 +271,17 @@ export class DashboardComponent implements OnInit {
   cargarProfesores() {
     this.loadingProfesores = true;
     this.errorProfesores = '';
+    this.cdr.detectChanges();
     this.api.getProfesores().subscribe({
       next: (res) => {
         this.profesores = res;
         this.loadingProfesores = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loadingProfesores = false;
         this.errorProfesores = 'Error al cargar profesores. Verifica la conexión con el servidor.';
+        this.cdr.detectChanges();
       }
     });
   }
